@@ -1,8 +1,4 @@
-README file
-	for https://subversive.cims.nyu.edu/exact/corelib2/trunk/progs/ivp/ 
 
-TO get to our SVN repository, use
-		username=guest and password=guest
 
 This folder contains our IVP project.  It has 3 subfolders:
 	3) endCover2 software:
