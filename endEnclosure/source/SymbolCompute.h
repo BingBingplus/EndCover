@@ -1,0 +1,99 @@
+﻿ *      Usage:
+ *              This file provides a helper routine
+ *
+ *                      expand_expression(inputString) -> outputString
+ *
+ *              where inputString is an algebraic expression written in a
+ *              CAPD-style / C-style syntax (using '^' for powers),
+ *              and outputString is an expanded / normalized expression string.
+*      Author: <Bingwei Zhang and Chee Yap>  (<Feb 2026>)
+ */
+
+#include <iostream>
+
+
+#include <symengine/basic.h>
+#include <symengine/add.h>
+#include <symengine/symbol.h>
+#include <symengine/dict.h>
+#include <symengine/integer.h>
+#include <symengine/mul.h>
+#include <symengine/pow.h>
+#include <symengine/parser.h>
+
+using SymEngine::Add;
+using SymEngine::Basic;
+using SymEngine::Integer;
+using SymEngine::integer;
+using SymEngine::Mul;
+using SymEngine::multinomial_coefficients;
+using SymEngine::Pow;
+using SymEngine::RCP;
+using SymEngine::rcp_dynamic_cast;
+using SymEngine::Symbol;
+using SymEngine::symbol;
+using SymEngine::umap_basic_num;
+std::string expand_expression(const std::string &input)
+{
+    //
+    std::string adjusted = input;
+    size_t pos = 0;
+
+    // 
+    while ((pos = adjusted.find('^', pos)) != std::string::npos) {
+        adjusted.replace(pos, 1, "**");
+        pos += 2;
+    }
+    while ((pos = adjusted.find(' ', pos)) != std::string::npos) {
+        adjusted.erase(pos, 1); // 
+    }
+
+    try {
+        // 
+        RCP<const Basic> expr = SymEngine::parse(adjusted);
+
+        // 
+        RCP<const Basic> expanded = expand(expr);
+
+        // 
+        std::string result = expanded->__str__();
+
+        // 
+        pos = 0;
+        while ((pos = result.find("**", pos)) != std::string::npos) {
+            result.replace(pos, 2, "^");
+            pos += 1;
+        }
+
+        // 
+        pos = 0;
+        while ((pos = result.find_first_of("xyzwabcdefghijklmnopqrstuv", pos))
+               != std::string::npos) {
+            if (pos > 0 && isalnum(result[pos - 1])) {
+                result.insert(pos, "*");
+                pos += 2;
+            } else {
+                pos += 1;
+            }
+        }
+
+        return result;
+
+    } catch (const std::exception &e) {
+        return "Error: " + std::string(e.what());
+    } catch (...) {
+        return "Error: Invalid expression";
+    }
+}
+
+// Example：
+
+  //  std::vector<std::string> SFun = { "((x^(-1))^2*(-1)*(x^(2)))", "(x+y)^3" };
+
+   // for (int i = 0; i < 2; ++i) {
+  //      SFun[i] = expand_expression(SFun[i]);
+   //     cout << "SFun" << SFun[i] << endl;
+   // 
+
+
+
