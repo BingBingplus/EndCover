@@ -1,0 +1,26 @@
+# Compiled programs and object files
+*.exe
+*.out
+*.o
+*.obj
+*.a
+*.dll
+
+# Generated output files
+out.txt
+E0.txt
+E1.txt
+E_0.txt
+E_1.txt
+
+# Build directories
+build/
+bin/
+
+# IDE and OS files
+.vscode/
+.vs/
+*.user
+*.suo
+.DS_Store
+Thumbs.db
